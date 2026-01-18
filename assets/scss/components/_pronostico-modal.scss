@@ -1,0 +1,18 @@
+@use '../abstracts/variables' as var;
+@use '../abstracts/mixins' as mix;
+
+
+/* uso grid en lugar de las utilidades de bootstrap para tener un control más granular de las columnas */
+
+.item-pronostico {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalImage {
+  width: 50px;
+  height: 50px;
+  aspect-ratio: 1/1;
+}

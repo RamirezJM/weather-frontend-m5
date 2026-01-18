@@ -1,0 +1,30 @@
+{
+  "name": "weather-frontend-m3",
+  "version": "1.0.0",
+  "description": "ClimApp-Modulo3",
+  "homepage": "https://github.com/RamirezJM/weather-frontend-m3#readme",
+  "bugs": {
+    "url": "https://github.com/RamirezJM/weather-frontend-m3/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RamirezJM/weather-frontend-m3.git"
+  },
+  "license": "MIT",
+  "author": "RamirezJM",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "watch:css": "sass assets/scss/main.scss assets/css/styles.css --watch --quiet",
+    "build:css": "postcss assets/css/styles.css --output assets/css/styles.css --no-map",
+    "purge": "postcss assets/css/styles.css --use @fullhuman/postcss-purgecss --output assets/css/styles.css --no-map"
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^7.0.2",
+    "autoprefixer": "^10.4.22",
+    "bootstrap": "^5.3.8",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.95.1"
+  }
+}

@@ -1,0 +1,10 @@
+@use '../abstracts//variables' as var;
+
+
+.pronostico {
+  background-color: var.$light;
+
+  @at-root [data-bs-theme="dark"] & {
+    background-color: var.$bg-dark;
+  }
+}

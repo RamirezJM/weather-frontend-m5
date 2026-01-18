@@ -1,0 +1,44 @@
+@use '../abstracts/variables' as var;
+@use '../abstracts/mixins' as mix;
+
+.hero__btn, .form__btn{
+  @include mix.gradient2(var.$danger-light, var.$danger);
+  width: 75%;
+
+   @media (min-width:992px) {
+    &--lg{
+      width: 50%;
+    }
+  }
+}
+
+.btn-detalle {
+  @include mix.gradient2(var.$primary, var.$sky-light)
+}
+
+.btn-close {
+ border: 2px solid var.$danger;
+
+  @at-root [data-bs-theme="dark"] & {
+    background-color: #23caba;
+    filter: invert(1);
+    border: 0;
+  }
+}
+
+.top__btn {
+  position: fixed;
+  bottom: 50px;
+  right: 20px;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity .5s ease-in-out;
+
+  @at-root [data-bs-theme="dark"] & {
+    background-color: var.$bg-dark;
+  }
+}
+
+.show {
+  opacity: 1;
+}

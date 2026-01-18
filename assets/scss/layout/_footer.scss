@@ -1,0 +1,6 @@
+@use '../abstracts/variables' as var;
+@use '../abstracts/mixins' as mix;
+
+footer{
+  @include mix.gradient(45deg, var.$primary, var.$sky-light 50%, var.$sky-dark )
+}

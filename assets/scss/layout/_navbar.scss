@@ -1,0 +1,9 @@
+@use '../abstracts/variables' as var;
+
+
+.navbar-custom-text .nav-link,
+.navbar-custom-text .navbar-brand {
+  color: var.$text-light;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
