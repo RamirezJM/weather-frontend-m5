@@ -129,26 +129,58 @@ class WeatherApp {
       lluvia: '<i class="bi bi-cloud-rain text-primary fs-2"></i>',
       parcial: '<i class="bi bi-cloud-sun text-secondary fs-2"></i>',
     };
-    this.ciudadesConfig = {
-      'New York': 'nueva-york',
-      'San Francisco': 'san-francisco',
-      'El Cairo': 'el-cairo',
-    };
+    /*    this.ciudadesConfig = {
+         'New York': 'nueva-york',
+         'San Francisco': 'san-francisco',
+         'El Cairo': 'el-cairo',
+       }; */
 
   }
 
 
   async init() {
-    const ciudadesIniciales = ['Santiago', 'Nueva York', 'Londres', 'Johannesburgo', 'Beijing', 'San Francisco', 'Budapest', 'El Cairo', 'París', 'Sidney'];
+    /* const ciudadesIniciales = ['Santiago', 'Nueva York', 'Londres', 'Johannesburgo', 'Beijing', 'San Francisco', 'Budapest', 'El Cairo', 'París', 'Sidney']; */
+    const ciudadesIniciales = [
+      { apiName: 'Santiago', imageKey: 'santiago' },
+      { apiName: 'Nueva York', imageKey: 'nueva-york' },
+      { apiName: 'London', imageKey: 'london' },
+      { apiName: 'Johannesburg', imageKey: 'johannesburg' },
+      { apiName: 'Beijing', imageKey: 'beijing' },
+      { apiName: 'San Francisco', imageKey: 'san-francisco' },
+      { apiName: 'El Cairo', imageKey: 'el-cairo' },
+      { apiName: 'Paris', imageKey: 'paris' },
+      { apiName: 'Sydney', imageKey: 'sydney' },
+    ];
 
-    for (const nombre of ciudadesIniciales) {
-      const data = await this.weatherService.getCurrentWeather(nombre);
+
+    /*   for (const nombre of ciudadesIniciales) {
+        const data = await this.weatherService.getCurrentWeather(nombre);
+        if (data) {
+          this.ciudades.push(this._normalizarCiudad(data));
+        }
+      } */
+    for (const ciudad of ciudadesIniciales) {
+      const data = await this.weatherService.getCurrentWeather(ciudad.apiName);
       if (data) {
-        this.ciudades.push(this._normalizarCiudad(data));
+        this.ciudades.push({
+          ...this._normalizarCiudad(data),
+          imageKey: ciudad.imageKey,
+        });
       }
     }
 
     this.renderizarTarjetas();
+  }
+
+  async _cargarModal(ciudad) {
+    const forecast = await this.weatherService.getForecast(ciudad.apiName);
+    const dias = this._procesarForecast(forecast);
+
+    const estadisticas = this._calcularEstadisticas(dias);
+    const conteoClima = this._contarTiposClima(dias);
+    const alerta = this._generarAlerta(dias, estadisticas, conteoClima);
+
+    this._renderizarModal(ciudad, dias, estadisticas, conteoClima, alerta);
   }
 
 
@@ -161,24 +193,26 @@ class WeatherApp {
     });
   }
 
-  _getImagePath(nombre) {
-   /*  const slug = this.ciudadesConfig[nombre] || 'default';
-    return `./assets/images/ciudades/${slug}.webp`; */
-     console.log('Nombre desde API:', nombre);
-  const slug = this.ciudadesConfig[nombre] || 'default';
-  console.log('Slug usado:', slug);
-  return `./assets/images/ciudades/${slug.toLowerCase()}.webp`;
+  /*   _getImagePath(nombre) {
+      console.log('Nombre desde API:', nombre);
+      const slug = this.ciudadesConfig[nombre] || 'default';
+      console.log('Slug usado:', slug);
+      return `./assets/images/ciudades/${slug}.webp`;
+  
+    } */
 
+  _getImagePath(imageKey) {
+    return `./assets/images/ciudades/${imageKey}.webp`;
   }
 
-  _crearTarjetaCiudad({ nombre, temperatura, estado, icono }) {
+  _crearTarjetaCiudad({ nombre, temperatura, estado, icono, imageKey, apiName }) {
     const col = document.createElement('div');
     col.className = 'col';
 
     col.innerHTML = `
-      <div class="card shadow-lg h-100 border-secondary">
+      <div class="card shadow-lg h-100 border-secondary" data-city="${apiName}">
         <div class="card-img-top">
-          <img src="./assets/images/ciudades/${this._getImagePath(nombre)}.webp" 
+          <img src="${this._getImagePath(imageKey)}" 
                alt="${nombre}" 
                class="img-fluid rounded-top">
         </div>
@@ -221,6 +255,14 @@ class WeatherApp {
     };
   }
 }
+
+document.addEventListener("click", (e) => {
+  const card = e.target.closest(".card[data-city]");
+  if (!card) return;
+
+  const cityApiName = card.dataset.city;
+  weatherApp.abrirModal(cityApiName);
+});
 
 const app = new WeatherApp('37e0deedb2b828a4356401d73bb2ea15');
 app.init();
