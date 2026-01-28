@@ -27,6 +27,18 @@ class WeatherService {
     }
   }
 
+  async getForecast(city) {
+    const url = `${this.baseUrl}/forecast?q=${city}&units=metric&lang=es&appid=${this.apiKey}`;
+    const resp = await fetch(url);
+
+    if (!resp.ok) {
+      throw new Error("Error al obtener forecast");
+    }
+
+    return await resp.json();
+  }
+
+
 
   _mapCurrentWeather(data) {
     return {
@@ -40,7 +52,9 @@ class WeatherService {
   }
 
 
+
 }
+
 
 /* const weatherService = new WeatherService('37e0deedb2b828a4356401d73bb2ea15');
 
@@ -183,6 +197,39 @@ class WeatherApp {
     this._renderizarModal(ciudad, dias, estadisticas, conteoClima, alerta);
   }
 
+  async abrirModal(cityApiName) {
+    try {
+      this._mostrarLoaderModal();
+
+      const forecastData = await this.weatherService.getForecast(cityApiName);
+
+      console.log("Forecast crudo:", forecastData);
+
+      this._renderizarModalBase(cityApiName, forecastData);
+      this._mostrarModal();
+
+    } catch (error) {
+      console.error(error);
+      this._mostrarErrorModal();
+    }
+  }
+
+    _mostrarLoaderModal() {
+  document.querySelector("#weatherModal .modal-body").innerHTML = `
+    <div class="text-center py-5">
+      <div class="spinner-border" role="status"></div>
+    </div>
+  `;
+}
+
+_mostrarModal() {
+  const modal = new bootstrap.Modal(
+    document.getElementById("weatherModal")
+  );
+  modal.show();
+}
+
+
 
   renderizarTarjetas() {
     this.contenedor.innerHTML = '';
@@ -231,6 +278,21 @@ class WeatherApp {
     return col;
   }
 
+  _renderizarModalBase(city, forecastData) {
+    const modalBody = document.querySelector("#weatherModal .modal-body");
+
+    modalBody.innerHTML = `
+    <h5 class="mb-3">Pronóstico 5 días – ${city}</h5>
+    <pre class="small bg-light p-2 rounded">
+${JSON.stringify(forecastData.list.slice(0, 5), null, 2)}
+    </pre>
+  `;
+  }
+
+
+
+
+
   _mapearIcono(iconoApi) {
     const mapa = {
       clear: this.iconos.despejado,
@@ -254,15 +316,19 @@ class WeatherApp {
       viento: data.viento,
     };
   }
+
 }
+const weatherApp = new WeatherApp();
 
 document.addEventListener("click", (e) => {
-  const card = e.target.closest(".card[data-city]");
-  if (!card) return;
+  const btn = e.target.closest(".btn-detalle");
+  if (!btn) return;
 
-  const cityApiName = card.dataset.city;
+  const cityApiName = btn.dataset.city;
   weatherApp.abrirModal(cityApiName);
 });
+
+
 
 const app = new WeatherApp('37e0deedb2b828a4356401d73bb2ea15');
 app.init();
