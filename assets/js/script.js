@@ -143,11 +143,10 @@ class WeatherApp {
       lluvia: '<i class="bi bi-cloud-rain text-primary fs-2"></i>',
       parcial: '<i class="bi bi-cloud-sun text-secondary fs-2"></i>',
     };
-    /*    this.ciudadesConfig = {
-         'New York': 'nueva-york',
-         'San Francisco': 'san-francisco',
-         'El Cairo': 'el-cairo',
-       }; */
+
+    this.modalEl = document.querySelector("#detalleModal");
+    this.modal = new bootstrap.Modal(this.modalEl);
+
 
   }
 
@@ -214,20 +213,43 @@ class WeatherApp {
     }
   }
 
-    _mostrarLoaderModal() {
-  document.querySelector("#weatherModal .modal-body").innerHTML = `
+  _mostrarLoaderModal() {
+    document.querySelector(".modal-body").innerHTML = `
     <div class="text-center py-5">
       <div class="spinner-border" role="status"></div>
     </div>
   `;
-}
+  }
 
-_mostrarModal() {
-  const modal = new bootstrap.Modal(
-    document.getElementById("weatherModal")
-  );
-  modal.show();
-}
+  _mostrarModal() {
+    const modal = new bootstrap.Modal(
+      document.getElementById("detalleModal")
+    );
+    modal.show();
+  }
+
+/*   _mostrarLoaderModal() {
+    document.querySelector('#detalleModalLabel').textContent = 'Cargando...';
+    document.querySelector('#modalTemp').textContent = '--';
+    document.querySelector('#modalEstado').textContent = '';
+    document.getElementById("modal-icono").innerHTML = '';
+    document.querySelector('#modalHumedad').textContent = '--';
+    document.querySelector('#modalViento').textContent = '--';
+
+    const contenedor = document.querySelector('#modalPronostico');
+    contenedor.innerHTML = `<p class="text-muted mb-0">Cargando pronóstico...</p>`;
+  } */
+
+  _mostrarErrorModal(mensaje = "No se pudo cargar el pronóstico.") {
+    document.querySelector('#detalleModalLabel').textContent = 'Error';
+    document.querySelector('#modalTemp').textContent = '--';
+    document.querySelector('#modalEstado').textContent = mensaje;
+    document.getElementById("modal-icono").innerHTML = `<i class="bi bi-exclamation-triangle text-danger fs-2"></i>`;
+
+    const contenedor = document.querySelector('#modalPronostico');
+    contenedor.innerHTML = `<p class="text-danger mb-0">${mensaje}</p>`;
+  }
+
 
 
 
@@ -257,7 +279,7 @@ _mostrarModal() {
     col.className = 'col';
 
     col.innerHTML = `
-      <div class="card shadow-lg h-100 border-secondary" data-city="${apiName}">
+      <div class="card shadow-lg h-100 border-secondary">
         <div class="card-img-top">
           <img src="${this._getImagePath(imageKey)}" 
                alt="${nombre}" 
@@ -268,7 +290,7 @@ _mostrarModal() {
           <h5 class="card-title mt-3 mb-2">${nombre}</h5>
           <p class="text-secondary fw-medium mb-1">${estado}</p>
           <h4 class="fw-bold">${temperatura}°C</h4>
-          <button class="btn mt-3 btn-detalle fw-semibold">
+          <button class="btn mt-3 btn-detalle fw-semibold" data-city="${nombre}">
             Ver Detalles
           </button>
         </div>
@@ -279,7 +301,7 @@ _mostrarModal() {
   }
 
   _renderizarModalBase(city, forecastData) {
-    const modalBody = document.querySelector("#weatherModal .modal-body");
+    const modalBody = document.querySelector(".modal-body");
 
     modalBody.innerHTML = `
     <h5 class="mb-3">Pronóstico 5 días – ${city}</h5>
